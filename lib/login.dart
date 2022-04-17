@@ -1,16 +1,10 @@
+import 'package:blog_app/createBlog.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import './auth_services.dart';
-
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: login(),
-  ));
-}
+import './createBlog.dart';
 
 class login extends StatefulWidget {
   const login({Key? key}) : super(key: key);
@@ -22,8 +16,9 @@ class login extends StatefulWidget {
 class loginState extends State<login> {
   var _formKeyuser = GlobalKey<FormState>();
   var _formkeypass = GlobalKey<FormState>();
+  var currentUser;
   bool hidePassword = true;
-  DatabaseReference ref = FirebaseDatabase.instance.ref('user');
+  static FirebaseAuth _auth = FirebaseAuth.instance;
 
   TextEditingController _fieldusername = TextEditingController();
   TextEditingController _fieldpassword = TextEditingController();
@@ -147,11 +142,24 @@ class loginState extends State<login> {
     );
   }
 
-  void loginValidate() {
-    print('kirim');
-
-    print(AuthServices.signin(_fieldusername.text, _fieldpassword.text));
-    print('dah kirim');
+  void loginValidate() async {
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+              email: _fieldusername.text, password: _fieldpassword.text);
+      currentUser = FirebaseAuth.instance.currentUser;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        print('Username Tidak ada');
+      } else if (e.code == 'wrong-password') {
+        print('Password Salah');
+      }
+    }
+    if (currentUser != null) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => CreateBlog()));
+    }
+    ;
   }
 
   void _togglePasswordview() {

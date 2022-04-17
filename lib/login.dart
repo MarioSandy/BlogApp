@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_core/firebase_core.dart';
+import './auth_services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -120,8 +121,10 @@ class loginState extends State<login> {
               child: Column(children: [
                 ElevatedButton(
                   onPressed: () async {
-                    if (_formKeyuser.currentState!.validate()) ;
-                    if (_formkeypass.currentState!.validate()) ;
+                    if (_formKeyuser.currentState!.validate() &&
+                        _formkeypass.currentState!.validate()) {
+                      loginValidate();
+                    }
                   },
                   child: Text(
                     'Login',
@@ -133,7 +136,7 @@ class loginState extends State<login> {
                       onPrimary: Colors.white),
                 ),
                 TextButton(
-                    onPressed: validasi,
+                    onPressed: loginValidate,
                     child: Text('Already Have an account? Sign up',
                         textAlign: TextAlign.right))
               ]),
@@ -144,10 +147,11 @@ class loginState extends State<login> {
     );
   }
 
-  void validasi() {
-    // validasiusername();
-    // validasipassword();
-    // ref.child("user").set({'Nama': 'Budi', 'Umur': '12'});
+  void loginValidate() {
+    print('kirim');
+
+    print(AuthServices.signin(_fieldusername.text, _fieldpassword.text));
+    print('dah kirim');
   }
 
   void _togglePasswordview() {

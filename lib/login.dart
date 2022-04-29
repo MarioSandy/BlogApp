@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import './auth_services.dart';
 import './createBlog.dart';
+import './register.dart';
 
 class login extends StatefulWidget {
   const login({Key? key}) : super(key: key);
@@ -116,7 +117,7 @@ class loginState extends State<login> {
               child: Column(children: [
                 ElevatedButton(
                   onPressed: () async {
-                    if (_formKeyuser.currentState!.validate() &&
+                    if (_formKeyuser.currentState!.validate() ||
                         _formkeypass.currentState!.validate()) {
                       loginValidate();
                     }
@@ -131,7 +132,7 @@ class loginState extends State<login> {
                       onPrimary: Colors.white),
                 ),
                 TextButton(
-                    onPressed: loginValidate,
+                    onPressed: gotoregister,
                     child: Text('Already Have an account? Sign up',
                         textAlign: TextAlign.right))
               ]),
@@ -160,6 +161,11 @@ class loginState extends State<login> {
           context, MaterialPageRoute(builder: (context) => CreateBlog()));
     }
     ;
+  }
+
+  void gotoregister() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => register()));
   }
 
   void _togglePasswordview() {

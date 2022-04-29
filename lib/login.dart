@@ -150,10 +150,9 @@ class loginState extends State<login> {
               email: _fieldusername.text, password: _fieldpassword.text);
       currentUser = FirebaseAuth.instance.currentUser;
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        print('Username Tidak ada');
-      } else if (e.code == 'wrong-password') {
-        print('Password Salah');
+      if (e.code != null) {
+        print('Username atau password tidak ada');
+        currentUser = null;
       }
     }
     if (currentUser != null) {

@@ -117,7 +117,7 @@ class loginState extends State<login> {
               child: Column(children: [
                 ElevatedButton(
                   onPressed: () async {
-                    if (_formKeyuser.currentState!.validate() ||
+                    if (_formKeyuser.currentState!.validate() &&
                         _formkeypass.currentState!.validate()) {
                       loginValidate();
                     }
@@ -156,6 +156,7 @@ class loginState extends State<login> {
       }
     }
     if (currentUser != null) {
+      print(FirebaseAuth.instance.currentUser!.displayName);
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => CreateBlog()));
     }

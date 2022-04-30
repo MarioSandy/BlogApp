@@ -5,7 +5,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import './auth_services.dart';
-import './createBlog.dart';
 import 'login.dart';
 
 class register extends StatefulWidget {
@@ -19,9 +18,10 @@ class registerState extends State<register> {
   var _formKeyuser = GlobalKey<FormState>();
   var _formkeypass = GlobalKey<FormState>();
   var _formkeynama = GlobalKey<FormState>();
-  var currentUser;
+  var CurrentUser;
   bool hidePassword = true;
   static FirebaseAuth _auth = FirebaseAuth.instance;
+  DatabaseReference ref = FirebaseDatabase.instance.ref();
 
   TextEditingController _fieldusername = TextEditingController();
   TextEditingController _fieldpassword = TextEditingController();
@@ -153,9 +153,10 @@ class registerState extends State<register> {
               child: Column(children: [
                 ElevatedButton(
                   onPressed: () async {
-                    if (_formKeyuser.currentState!.validate() ||
-                        _formkeypass.currentState!.validate()) {
-                      loginValidate();
+                    if (_formKeyuser.currentState!.validate() &&
+                        _formkeypass.currentState!.validate() &&
+                        _formkeynama.currentState!.validate()) {
+                      registerValidate();
                     }
                   },
                   child: Text(
@@ -179,24 +180,32 @@ class registerState extends State<register> {
     );
   }
 
-  void loginValidate() async {
+  void registerValidate() async {
     try {
       UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
+          .createUserWithEmailAndPassword(
               email: _fieldusername.text, password: _fieldpassword.text);
-      currentUser = FirebaseAuth.instance.currentUser;
+      CurrentUser = FirebaseAuth.instance.currentUser;
+      await FirebaseAuth.instance.currentUser
+          ?.updateDisplayName(_fieldnama.text);
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        print('Username Tidak ada');
-      } else if (e.code == 'wrong-password') {
-        print('Password Salah');
+      if (e.code == 'weak-password') {
+        print('The password too weak');
+      } else if (e.code == 'email-already-in-use') {
+        print('account already exists for that email');
       }
+    } catch (e) {
+      print(e);
     }
-    if (currentUser != null) {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => CreateBlog()));
-    }
-    ;
+    print(FirebaseAuth.instance.currentUser!.displayName);
+
+    // if (currentUser != null) {
+    //   await ref
+    //       .child('user/' + currentUser)
+    //       .push()
+    //       .set({'NamaLengkap': _fieldnama});
+    //   print('berhasil');
+    // }
   }
 
   void gotologin() {

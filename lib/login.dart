@@ -113,7 +113,7 @@ class loginState extends State<login> {
                   ]))),
           Container(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+              padding: const EdgeInsets.fromLTRB(5, 20, 5, 0),
               child: Column(children: [
                 ElevatedButton(
                   onPressed: () async {
